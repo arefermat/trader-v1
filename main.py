@@ -19,6 +19,7 @@ BASE_URL = 'https://paper-api.alpaca.markets'
 profit = 0
 paper_stocks = 0
 
+
 # Initialize Alpaca API
 api = tradeapi.REST(API_KEY, API_SECRET, BASE_URL, api_version='v2')
 
@@ -66,6 +67,7 @@ def sell_stock(symbol, qty):
 
 # Trading logic
 def run_trading(model, scaler, stock_symbol):
+    global paper_stocks
     current_price = get_current_price(stock_symbol)
     recent_data = scaled_data[-60:].reshape(1, 60, 1)
     predicted_price = model.predict(recent_data)
@@ -73,20 +75,23 @@ def run_trading(model, scaler, stock_symbol):
     
     if predicted_price > current_price:
         print(f"Predicted price is higher ({predicted_price}), buying stock.")
-        buy_stock(stock_symbol, 1)
+        #buy_stock(stock_symbol, 1)
+        paper_stocks += 1
     else:
         print(f"Predicted price is lower ({predicted_price}), selling stock.")
-        sell_stock(stock_symbol, 1)
+        #sell_stock(stock_symbol, 1)
+        paper_stocks -= 1
 
 # Main execution
 if __name__ == "__main__":
-    stock_symbol = 'AAPL'
+    stock_symbol = input("Stock Symbol : ")
+    interval = input("Interval (Minutes) : ")
     data = fetch_data(stock_symbol)
     X_train, y_train, scaler = prepare_data(data)
     model = build_and_train_model(X_train, y_train)
     
     # Schedule trading every 5 minutes
-    schedule.every(5).minutes.do(run_trading, model, scaler, stock_symbol)
+    schedule.every(interval).minutes.do(run_trading, model, scaler, stock_symbol)
 
     # Keep the script running
     while True:
