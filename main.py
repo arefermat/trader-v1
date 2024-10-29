@@ -14,6 +14,10 @@ API_KEY = 'your_api_key'
 API_SECRET = 'your_api_secret'
 BASE_URL = 'https://paper-api.alpaca.markets'
 
+# For paper trading and profit tracking
+profit = 0
+paper_stocks = 0
+
 # Initialize Alpaca API
 api = tradeapi.REST(API_KEY, API_SECRET, BASE_URL, api_version='v2')
 
