@@ -20,6 +20,8 @@
 *.mod
 *.smod
 
+*config.py
+
 # Compiled Static libraries
 *.lai
 *.la
