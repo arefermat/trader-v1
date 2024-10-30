@@ -9,15 +9,13 @@ from sklearn.preprocessing import MinMaxScaler
 import schedule
 import time
 import config
+from trained-models import *
 
 # Alpaca API Credentials
 API_KEY = config.alpaca_api_key
 API_SECRET = config.alpaca_secret_api_key
 BASE_URL = 'https://paper-api.alpaca.markets'
 
-# For paper trading and profit tracking
-profit = 0
-paper_stocks = 0
 
 
 # Initialize Alpaca API
@@ -75,12 +73,11 @@ def run_trading(model, scaler, stock_symbol):
     
     if predicted_price > current_price:
         print(f"Predicted price is higher ({predicted_price}), buying stock.")
-        #buy_stock(stock_symbol, 1)
-        paper_stocks += 1
+        buy_stock(stock_symbol, 1) 
     else:
         print(f"Predicted price is lower ({predicted_price}), selling stock.")
-        #sell_stock(stock_symbol, 1)
-        paper_stocks -= 1
+        sell_stock(stock_symbol, 1)
+        
 
 # Main execution
 if __name__ == "__main__":
@@ -89,12 +86,15 @@ if __name__ == "__main__":
     data = fetch_data(stock_symbol)
     X_train, y_train, scaler = prepare_data(data)
     model = build_and_train_model(X_train, y_train)
-    
+
+    while True:
     # Schedule trading every 5 minutes
     schedule.every(interval).minutes.do(run_trading, model, scaler, stock_symbol)
 
     # Keep the script running
     while True:
         schedule.run_pending()
+        if keyboard.is_pressed("ctrl+s"):
+            break
         time.sleep(1)
 
