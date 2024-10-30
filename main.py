@@ -43,15 +43,15 @@ def prepare_data(data, time_step=60):
     return np.array(X), np.array(y), scaler
 
 # Build and train the LSTM model
-def build_and_train_model(X_train, y_train):
+def build_and_train_model(X_train, y_train, lstm_layer_one_neurons=50, layer_one_return_sequences=True, dropout=0.2, lstm_layer_two_neurons=50, layer_two_return_sequences=False, dense_one_neurons=25, dense_two_neurons=1, optimizer="adam", loss="mean_square_average"):
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
     model = Sequential()
-    model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-    model.add(Dropout(0.2))
-    model.add(LSTM(units=50, return_sequences=False))
-    model.add(Dropout(0.2))
-    model.add(Dense(units=25))
-    model.add(Dense(units=1))
+    model.add(LSTM(layer_one_neurons, one_return_sequences, input_shape=(X_train.shape[1], 1)))
+    model.add(Dropout(dropout))
+    model.add(LSTM(lstm_layer_two_neurons, layer_two_return_sequences))
+    model.add(Dropout(dropout))
+    model.add(Dense(dense_one_neuron))
+    model.add(Dense(dense_two_neuron))
     
     model.compile(optimizer='adam', loss='mean_squared_error')
     model.fit(X_train, y_train, batch_size=64, epochs=10)
@@ -99,6 +99,21 @@ if __name__ == "__main__":
         clear()
         stock_symbol = input("Stock Symbol : ")
         clear()
+        lstm_layer_one_units = input("How many units for the first LSTM layer (50) : ")
+        clear()
+        layer_one_return_sequences = input("Would like a return sequence (True) : ")
+        clear()
+        lstm_layer_two_units = input("How many units for the second LSTM layer (50) : ")
+        clear()
+        layer_two_return_sequences = input("Would you like a return sequence (False) : ")
+        clear()
+        dense_one_neurons = input("How many units for the first Dense layer (25) : ")
+        clear()
+        dense_two_neurons = input("How many units for the second Dense layer (1) : ")
+        clear()
+        dropout = input("Whats yout drop out percentage (20%) : ") + print("%")
+        clear()
+        dropout = dropout/100
         start = time.perf_counter()
         data = fetch_data(stock_symbol)
         X_train, y_train, scaler = prepare_data(data)
@@ -124,6 +139,7 @@ if __name__ == "__main__":
     elif model_decision == "load":
         clear()
         file_name = input("What's the file directory? ")
+        stock_symbol = input("Security: What's your stock symbol? ")
         model = load_model(model, file_name)
         print("Done!")
         time.sleep(2)
