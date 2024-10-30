@@ -10,6 +10,9 @@ import schedule
 import time
 import config
 from trained-models import *
+import keyboard
+import os
+
 
 # Alpaca API Credentials
 API_KEY = config.alpaca_api_key
@@ -20,6 +23,9 @@ BASE_URL = 'https://paper-api.alpaca.markets'
 
 # Initialize Alpaca API
 api = tradeapi.REST(API_KEY, API_SECRET, BASE_URL, api_version='v2')
+
+def clear():
+    os.System("cls")
 
 # Fetch historical stock data
 def fetch_data(stock_symbol):
@@ -77,17 +83,52 @@ def run_trading(model, scaler, stock_symbol):
     else:
         print(f"Predicted price is lower ({predicted_price}), selling stock.")
         sell_stock(stock_symbol, 1)
-        
 
+# Save model to a file
+def save_model(model, filename):
+    model.save(filename)
+
+# Load the model from a file
+def load_model(model, filename):
+    model.load(filename)
+    
 # Main execution
 if __name__ == "__main__":
-    stock_symbol = input("Stock Symbol : ")
-    interval = input("Interval (Minutes) : ")
-    data = fetch_data(stock_symbol)
-    X_train, y_train, scaler = prepare_data(data)
-    model = build_and_train_model(X_train, y_train)
-
-    while True:
+    model_decision = input("Do you want to train a new model or load an existing one")
+    if model_decision == "train":
+        clear()
+        stock_symbol = input("Stock Symbol : ")
+        clear()
+        start = time.perf_counter()
+        data = fetch_data(stock_symbol)
+        X_train, y_train, scaler = prepare_data(data)
+        model = build_and_train_model(X_train, y_train)
+        end = time.perf_counter()
+        time_taken = round(end-start, 2)
+        print("Done!")
+        if time_taken > 60:
+            print(f"It took {time_taken} seconds.")
+        else:
+            print(f"It took {round(time_taken/60, 2)} minutes.")
+        time.sleep(3)
+        clear()
+        save_decision = input("Would you like to save this model? (Y/N) : ")
+        if save_decision == "Y":
+            clear()
+            file_name = open(input("What's the file directory? "), "x")
+            save_model(model, file_name)
+        elif save_decision == "N":
+            print("Ok")
+            time.sleep(2)
+            clear()
+    elif model_decision == "load":
+        clear()
+        file_name = input("What's the file directory? ")
+        model = load_model(model, file_name)
+        print("Done!")
+        time.sleep(2)
+        clear()
+    
     # Schedule trading every 5 minutes
     schedule.every(interval).minutes.do(run_trading, model, scaler, stock_symbol)
 
