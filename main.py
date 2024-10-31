@@ -201,6 +201,12 @@ if __name__ == "__main__":
 
         if decision == "1":
             save_model(model, file_name)
+        elif decision == "2":
+            new_file_name = input("Whats the directory? : ")
+            load_model(new_file_name)
+            new_stock_symbol = input("Security: Whats your stock symbol? : ")
+            file_name = new_file_name
+            stock_symbol = new_stock_symbol
         
         if keyboard.is_pressed("ctrl+s"):
             break
