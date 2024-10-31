@@ -64,10 +64,22 @@ def get_current_price(symbol):
     return stock_bars[-1].c
 
 def buy_stock(symbol, qty):
-    api.submit_order(symbol=symbol, qty=qty, side='buy', type='market', time_in_force='gtc')
+    api.submit_order(
+        symbol=symbol,
+        qty=qty,
+        side='buy', 
+        type='market', 
+        time_in_force='gtc'
+    )
 
 def sell_stock(symbol, qty):
-    api.submit_order(symbol=symbol, qty=qty, side='sell', type='market', time_in_force='gtc')
+    api.submit_order(
+        symbol=symbol, 
+        qty=qty, 
+        side='sell', 
+        type='market', 
+        time_in_force='gtc'
+    )
 
 # Trading logic
 def run_trading(model, scaler, stock_symbol):
@@ -119,7 +131,7 @@ if __name__ == "__main__":
         start = time.perf_counter()
         data = fetch_data(stock_symbol)
         X_train, y_train, scaler = prepare_data(data)
-        model = build_and_train_model(X_train, y_train)
+        model = build_and_train_model(X_train, y_train, lstm_layer_one_units, layer_one_return_units, dropout, lstm_layer_two_units, layer_two_return_sequences, dense_one_neurons, dense_two_neurons, optimizer_choice, loss_calculation)
         end = time.perf_counter()
         time_taken = round(end-start, 2)
         print("Done!")
