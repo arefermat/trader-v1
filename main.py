@@ -43,7 +43,7 @@ def prepare_data(data, time_step=60):
     return np.array(X), np.array(y), scaler
 
 # Build and train the LSTM model
-def build_and_train_model(X_train, y_train, lstm_layer_one_neurons=50, layer_one_return_sequences=True, dropout=0.2, lstm_layer_two_neurons=50, layer_two_return_sequences=False, dense_one_neurons=25, dense_two_neurons=1, optimizer="adam", loss="mean_square_average"):
+def build_and_train_model(X_train, y_train, lstm_layer_one_neurons=50, layer_one_return_sequences=True, dropout=0.2, lstm_layer_two_neurons=50, layer_two_return_sequences=False, dense_one_neurons=25, optimizer="adam", loss="mean_square_average"):
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
     model = Sequential()
     model.add(LSTM(lstm_layer_one_neurons, layer_one_return_sequences, input_shape=(X_train.shape[1], 1)))
@@ -51,7 +51,7 @@ def build_and_train_model(X_train, y_train, lstm_layer_one_neurons=50, layer_one
     model.add(LSTM(lstm_layer_two_neurons, layer_two_return_sequences))
     model.add(Dropout(dropout))
     model.add(Dense(dense_one_neuron))
-    model.add(Dense(dense_two_neuron))
+    model.add(Dense(1))
     
     model.compile(optimizer=optimizer, loss=loss)
     model.fit(X_train, y_train, batch_size=64, epochs=10)
@@ -121,8 +121,6 @@ if __name__ == "__main__":
         clear()
         dense_one_neurons = input("How many units for the first Dense layer (25) : ")
         clear()
-        dense_two_neurons = input("How many units for the second Dense layer (1) : ")
-        clear()
         dropout = (input("Whats your drop out percentage (20%) : ") + print("%")) / 100
         clear()
         optimizer_choice = input("Whats your optimizer? (adam) : ")
@@ -131,7 +129,7 @@ if __name__ == "__main__":
         start = time.perf_counter()
         data = fetch_data(stock_symbol)
         X_train, y_train, scaler = prepare_data(data)
-        model = build_and_train_model(X_train, y_train, lstm_layer_one_units, layer_one_return_units, dropout, lstm_layer_two_units, layer_two_return_sequences, dense_one_neurons, dense_two_neurons, optimizer_choice, loss_calculation)
+        model = build_and_train_model(X_train, y_train, lstm_layer_one_units, layer_one_return_units, dropout, lstm_layer_two_units, layer_two_return_sequences, dense_one_neurons, optimizer_choice, loss_calculation)
         end = time.perf_counter()
         time_taken = round(end-start, 2)
         print("Done!")
