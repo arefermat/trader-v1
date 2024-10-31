@@ -27,6 +27,9 @@ API_SECRET = config.alpaca_secret_api_key
 BASE_URL = 'https://paper-api.alpaca.markets'
 
 
+stock_amount = 0
+money_budget = 100
+
 
 # Initialize Alpaca API
 api = tradeapi.REST(API_KEY, API_SECRET, BASE_URL, api_version='v2')
@@ -92,9 +95,23 @@ def sell_stock(symbol, qty):
         time_in_force='gtc'
     )
 
+def buy_amount_of_stock(pred_price):
+    if pred_price <= (pred_price + (pred_price * 0.1)):
+        stock_buy = 1
+    elif pred_price <= (pred_price + (pred_price * 0.2)) and pred_price > (pred_price + (pred_price * 0.1)):
+        stock_buy = 2
+    elif pred_price <= (pred_price + (pred_price * 0.3)) and pred_price > (pred_price + (pred_price * 0.2)):
+        stock_buy = 3
+    elif pred_price <= (pred_price + (pred_price * 0.4)) and pred_price > (pred_price + (pred_price * 0.3)):
+        stock_buy = 4
+    elif pred_price > (pred_price * 0.5)):
+        stock_buy = 5
+    return stock_buy
+
 # Trading logic
 def run_trading(model, scaler, stock_symbol):
     global paper_stocks
+    global predicted_price
     current_price = get_current_price(stock_symbol)
     recent_data = scaled_data[-60:].reshape(1, 60, 1)
     predicted_price = model.predict(recent_data)
@@ -102,7 +119,7 @@ def run_trading(model, scaler, stock_symbol):
     
     if predicted_price > current_price:
         print(f"Predicted price is higher ({predicted_price}), buying stock.")
-        buy_stock(stock_symbol, 1) 
+        buy_stock(stock_symbol, buy_amount_of_stock(predicted_price)) 
     else:
         print(f"Predicted price is lower ({predicted_price}), selling stock.")
         sell_stock(stock_symbol, 1)
