@@ -1,4 +1,4 @@
-# Trader AI
+# Trader AI 1
 Version 1.0
 ## Requirements : 
 Trading Stock at fast pace,
