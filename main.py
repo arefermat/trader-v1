@@ -9,7 +9,6 @@ from sklearn.preprocessing import MinMaxScaler
 import schedule
 import time
 import config
-from trained-models import *
 import keyboard
 import os
 
@@ -47,14 +46,14 @@ def prepare_data(data, time_step=60):
 def build_and_train_model(X_train, y_train, lstm_layer_one_neurons=50, layer_one_return_sequences=True, dropout=0.2, lstm_layer_two_neurons=50, layer_two_return_sequences=False, dense_one_neurons=25, dense_two_neurons=1, optimizer="adam", loss="mean_square_average"):
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
     model = Sequential()
-    model.add(LSTM(layer_one_neurons, one_return_sequences, input_shape=(X_train.shape[1], 1)))
+    model.add(LSTM(lstm_layer_one_neurons, layer_one_return_sequences, input_shape=(X_train.shape[1], 1)))
     model.add(Dropout(dropout))
     model.add(LSTM(lstm_layer_two_neurons, layer_two_return_sequences))
     model.add(Dropout(dropout))
     model.add(Dense(dense_one_neuron))
     model.add(Dense(dense_two_neuron))
     
-    model.compile(optimizer='adam', loss='mean_squared_error')
+    model.compile(optimizer=optimizer, loss=loss)
     model.fit(X_train, y_train, batch_size=64, epochs=10)
     return model
 
@@ -112,9 +111,11 @@ if __name__ == "__main__":
         clear()
         dense_two_neurons = input("How many units for the second Dense layer (1) : ")
         clear()
-        dropout = input("Whats yout drop out percentage (20%) : ") + print("%")
+        dropout = (input("Whats your drop out percentage (20%) : ") + print("%")) / 100
         clear()
-        dropout = dropout/100
+        optimizer_choice = input("Whats your optimizer? (adam) : ")
+        clear()
+        loss_calculation = input("How do you want to calculate your loss? (mean_square_average) : ").replace(" ", "_")
         start = time.perf_counter()
         data = fetch_data(stock_symbol)
         X_train, y_train, scaler = prepare_data(data)
