@@ -34,6 +34,7 @@ def fetch_data(stock_symbol):
 
 # Prepare the data for the LSTM model
 def prepare_data(data, time_step=60):
+    global scaled_data
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_data = scaler.fit_transform(data)
     X, y = [], []
@@ -50,7 +51,7 @@ def build_and_train_model(X_train, y_train, lstm_layer_one_neurons=50, layer_one
     model.add(Dropout(dropout))
     model.add(LSTM(lstm_layer_two_neurons, layer_two_return_sequences))
     model.add(Dropout(dropout))
-    model.add(Dense(dense_one_neuron))
+    model.add(Dense(dense_one_neurons))
     model.add(Dense(1))
     
     model.compile(optimizer=optimizer, loss=loss)
@@ -131,7 +132,7 @@ if __name__ == "__main__":
         start = time.perf_counter()
         data = fetch_data(stock_symbol)
         X_train, y_train, scaler = prepare_data(data)
-        model = build_and_train_model(X_train, y_train, lstm_layer_one_units, layer_one_return_units, dropout, lstm_layer_two_units, layer_two_return_sequences, dense_one_neurons, optimizer_choice, loss_calculation)
+        model = build_and_train_model(X_train, y_train, lstm_layer_one_neurons=lstm_layer_one_units, layer_one_return_sequences=layer_one_return_sequences, dropout=dropout, lstm_layer_two_neurons=lstm_layer_two_units, layer_two_return_sequences=layer_two_return_sequences, dense_one_neurons=dense_one_neurons, optimizer=optimizer_choice, loss=loss_calculation)
         end = time.perf_counter()
         time_taken = round(end-start, 2)
         print("Done!")
@@ -154,10 +155,12 @@ if __name__ == "__main__":
         clear()
         file_name = f'trained-models/{input("What's the file directory? ")}'
         stock_symbol = input("Security: What's your stock symbol? ")
-        model = load_model(model, file_name)
+        model = load_model(file_name)
         print("Done!")
         time.sleep(2)
         clear()
+
+    interval = input("How long do you want in between trades? (Minutes) : ")
     
     # Schedule trading every 5 minutes
     schedule.every(interval).minutes.do(run_trading, model, scaler, stock_symbol)
@@ -177,4 +180,3 @@ if __name__ == "__main__":
         if keyboard.is_pressed("ctrl+s"):
             break
         time.sleep(1)
-
