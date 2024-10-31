@@ -163,6 +163,15 @@ if __name__ == "__main__":
     # Keep the script running
     while True:
         schedule.run_pending()
+        print("1. Save model")
+        print("2. Load different model")
+        print("3. Show profit")
+        print("4. Credits")
+        decision = input(": ")
+
+        if decision == "1":
+            pass
+        
         if keyboard.is_pressed("ctrl+s"):
             break
         time.sleep(1)
