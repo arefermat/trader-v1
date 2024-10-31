@@ -63,6 +63,7 @@ def get_current_price(symbol):
     stock_bars = barset[symbol]
     return stock_bars[-1].c
 
+# Sumbit order for stock
 def buy_stock(symbol, qty):
     api.submit_order(
         symbol=symbol,
@@ -72,6 +73,7 @@ def buy_stock(symbol, qty):
         time_in_force='gtc'
     )
 
+# Sell stock
 def sell_stock(symbol, qty):
     api.submit_order(
         symbol=symbol, 
@@ -142,7 +144,7 @@ if __name__ == "__main__":
         save_decision = input("Would you like to save this model? (Y/N) : ")
         if save_decision == "Y":
             clear()
-            file_name = open(input("What's the file directory? "), "x")
+            file_name = open(f'trained-models/{input("What's the file directory? ")}', "x")
             save_model(model, file_name)
         elif save_decision == "N":
             print("Ok")
@@ -150,7 +152,7 @@ if __name__ == "__main__":
             clear()
     elif model_decision == "load":
         clear()
-        file_name = input("What's the file directory? ")
+        file_name = f'trained-models/{input("What's the file directory? ")}'
         stock_symbol = input("Security: What's your stock symbol? ")
         model = load_model(model, file_name)
         print("Done!")
@@ -170,7 +172,7 @@ if __name__ == "__main__":
         decision = input(": ")
 
         if decision == "1":
-            pass
+            save_model(model, file_name)
         
         if keyboard.is_pressed("ctrl+s"):
             break
