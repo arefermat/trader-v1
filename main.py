@@ -1,11 +1,17 @@
+# pip install yfinance
 import yfinance as yf
+# pip install numpy
 import numpy as np
+# pip install pandas
 import pandas as pd
+# pip install alpaca_trade_api
 import alpaca_trade_api as tradeapi
+# pip install tensorflow
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from sklearn.preprocessing import MinMaxScaler
+# pip install schedule
 import schedule
 import time
 import config
