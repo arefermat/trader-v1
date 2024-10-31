@@ -10,11 +10,13 @@ import alpaca_trade_api as tradeapi
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
+# pip install scikit-learn
 from sklearn.preprocessing import MinMaxScaler
 # pip install schedule
 import schedule
 import time
 import config
+# pip install keyboard
 import keyboard
 import os
 
